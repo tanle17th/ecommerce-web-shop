@@ -13,7 +13,7 @@ import useStyles from './styles'
 
 // data we get here is props,
 // destructure to get product object
-const Product = ({ product, onAddToCart }) => {
+const Product = ({ product, handleAddToCart }) => {
   const classes = useStyles()
 
   return (
@@ -42,7 +42,7 @@ const Product = ({ product, onAddToCart }) => {
       <CardActions disableSpacing className={classes.cardActions}>
         <IconButton
           aria-label="Add to Cart"
-          onClick={() => onAddToCart(product.id, 1)}
+          onClick={() => handleAddToCart(product.id, 1)}
         >
           <AddShoppingCart />
         </IconButton>

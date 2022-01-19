@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { commerce } from './lib/commerce'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import { Products, Navbar, Cart } from './components'
 
@@ -22,14 +23,38 @@ const App = () => {
     setCart(await commerce.cart.retrieve())
   }
 
-  // item added to cart is returned by CommerceJS
-  // it has CART object inside
-  // we need to get that cart object and set the whole cart
-  // back to useState()
+  /** [ADD] */
   const handleAddToCart = async (productId, quantity) => {
-    const item = await commerce.cart.add(productId, quantity)
+    // item added to cart is returned by CommerceJS
+    // it has CART object inside
+    // we need to get that cart object and set the whole cart
+    // back to useState()
+    const { cart } = await commerce.cart.add(productId, quantity)
 
-    setCart(item.cart)
+    setCart(cart)
+  }
+
+  /** [UPDATE] */
+  const handleUpdateCartQty = async (productId, quantity) => {
+    // we are updating the whole CART
+    // there are multiple fields to update in the obj but we want only quantity
+    const { cart } = await commerce.cart.update(productId, { quantity })
+
+    setCart(cart)
+  }
+
+  /** [REMOVE ONE] */
+  const handleRemoveFromCart = async (productId) => {
+    const { cart } = await commerce.cart.remove(productId)
+
+    setCart(cart)
+  }
+
+  /** [EMPTY] */
+  const handleEmptyCart = async () => {
+    const { cart } = await commerce.cart.empty()
+
+    setCart(cart)
   }
 
   // fetch products only once
@@ -41,11 +66,33 @@ const App = () => {
   }, [])
 
   return (
-    <div>
-      <Navbar totalItems={cart.total_items} />
-      {/* <Products products={products} onAddToCart={handleAddToCart} /> */}
-      <Cart cart={cart} />
-    </div>
+    <Router>
+      <div>
+        {/* Navbar will always be displayed */}
+        <Navbar totalItems={cart.total_items} />
+        {/* Routes is to define which route between these routes
+        you want to switch into */}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Products products={products} handleAddToCart={handleAddToCart} />
+            }
+          ></Route>
+          <Route
+            path="/cart"
+            element={
+              <Cart
+                cart={cart}
+                handleUpdateCartQty={handleUpdateCartQty}
+                handleRemoveFromCart={handleRemoveFromCart}
+                handleEmptyCart={handleEmptyCart}
+              />
+            }
+          ></Route>
+        </Routes>
+      </div>
+    </Router>
   )
 }
 
