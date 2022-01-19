@@ -1,7 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles'
 
-// makeStyles func receives a callback function
-// with an instance returned (an object)
 export default makeStyles(() => ({
   root: {
     maxWidth: '100%',
@@ -10,16 +8,18 @@ export default makeStyles(() => ({
     flexDirection: 'column',
   },
   media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-  cardActions: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    marginTop: 'auto',
+    height: 220,
   },
   cardContent: {
     display: 'flex',
     justifyContent: 'space-between',
+  },
+  cardActions: {
+    justifyContent: 'space-between',
+    marginTop: 'auto',
+  },
+  buttons: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }))
