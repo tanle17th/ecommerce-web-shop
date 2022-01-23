@@ -22,6 +22,7 @@ const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
   const [activeStep, setActiveStep] = useState(0)
   const [checkoutToken, setCheckoutToken] = useState(null)
   const [shippingData, setShippingData] = useState({})
+  const [isFinished, setIsFinished] = useState(false)
   const classes = useStyles()
   const navigate = useNavigate()
 
@@ -55,6 +56,12 @@ const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
     nextStep()
   }
 
+  const timeout = () => {
+    setTimeout(() => {
+      setIsFinished(true)
+    }, 1000)
+  }
+
   const Form = () =>
     activeStep === 0 ? (
       <AddressForm checkoutToken={checkoutToken} next={next} />
@@ -65,6 +72,7 @@ const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
         backStep={backStep}
         nextStep={nextStep}
         handleCaptureCheckout={handleCaptureCheckout}
+        timeout={timeout}
       />
     )
 
@@ -79,6 +87,22 @@ const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
           <Divider className={classes.divider} />
           <Typography variant="subtitle2">
             Order ref: {order.customer_reference}
+          </Typography>
+        </div>
+        <br />
+        <Button component={Link} to="/" variant="outlined" type="button">
+          Back to Home
+        </Button>
+      </>
+    ) : isFinished ? (
+      <>
+        <div>
+          <Typography variant="h5">
+            Input infinite: 424242 in card details to see the right result
+          </Typography>
+          <br />
+          <Typography variant="h6">
+            This is a mock confirmation message. Thank you for your purchase!
           </Typography>
         </div>
         <br />
