@@ -59,7 +59,7 @@ const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
   const timeout = () => {
     setTimeout(() => {
       setIsFinished(true)
-    }, 1000)
+    }, 5000)
   }
 
   const Form = () =>
