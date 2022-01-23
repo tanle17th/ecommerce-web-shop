@@ -13,16 +13,18 @@ import useStyles from './styles'
 import AddressForm from '../AddressForm'
 import PaymentForm from '../PaymentForm'
 import { commerce } from '../../../lib/commerce'
+import { Link } from 'react-router-dom'
 
 const steps = ['Shipping address', 'Payment details']
 
-const Checkout = ({ cart }) => {
+const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
   const [activeStep, setActiveStep] = useState(0)
   const [checkoutToken, setCheckoutToken] = useState(null)
   const [shippingData, setShippingData] = useState({})
   const classes = useStyles()
 
   useEffect(() => {
+    let isMounted = true
     const generateToken = async () => {
       try {
         // generateToken(cartId, typeOfToken):
@@ -37,7 +39,10 @@ const Checkout = ({ cart }) => {
     }
 
     // async function can not be used with useEffect
-    generateToken()
+    isMounted && generateToken()
+    return () => {
+      isMounted = false
+    }
   }, [cart])
 
   /** Move back and forth the steps */
@@ -46,7 +51,6 @@ const Checkout = ({ cart }) => {
 
   /** Data received from AddressForm */
   const next = (data) => {
-    console.log(data)
     setShippingData(data)
 
     nextStep()
@@ -56,10 +60,44 @@ const Checkout = ({ cart }) => {
     activeStep === 0 ? (
       <AddressForm checkoutToken={checkoutToken} next={next} />
     ) : (
-      <PaymentForm />
+      <PaymentForm
+        shippingData={shippingData}
+        checkoutToken={checkoutToken}
+        backStep={backStep}
+        nextStep={nextStep}
+        handleCaptureCheckout={handleCaptureCheckout}
+      />
     )
 
-  const Confirmation = () => <div>Confirmation</div>
+  let Confirmation = () =>
+    order.customer ? (
+      <>
+        <div>
+          <Typography variant="h5">
+            Thank you for your purchase, {order.customer.firstname}{' '}
+            {order.customer_reference}
+          </Typography>
+          <Divider className={classes.divider} />
+          <Typography variant="subtitle2">
+            Order ref: {order.customer_reference}
+          </Typography>
+        </div>
+        <br />
+        <Button component={Link} to="/" variant="outlined" type="button">
+          Back to Home
+        </Button>
+      </>
+    ) : (
+      <div className={classes.spinner}>
+        <CircularProgress />
+      </div>
+    )
+
+  if (error) {
+    ;<>
+      <Typography variant="h5">Error: {error}</Typography>
+    </>
+  }
 
   return (
     <>

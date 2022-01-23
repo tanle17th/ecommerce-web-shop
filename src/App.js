@@ -8,6 +8,9 @@ const App = () => {
   // initialize useState with empty array:
   const [products, setProducts] = useState([])
   const [cart, setCart] = useState({})
+  const [order, setOrder] = useState({})
+
+  const [errorMessage, setErrorMessage] = useState('')
 
   // fetchProducts async func from
   // commerce instance
@@ -57,6 +60,28 @@ const App = () => {
     setCart(cart)
   }
 
+  /** [ORDER COMPLETED - CAPTURE] */
+  const handleCaptureCheckout = async (checkoutTokenId, newOrder) => {
+    try {
+      const incomingOrder = await commerce.checkout.capture(
+        checkoutTokenId,
+        newOrder,
+      )
+
+      setOrder(incomingOrder)
+      refreshCart()
+    } catch (error) {
+      setErrorMessage(error.data.error.message)
+    }
+  }
+
+  /** [REFRESH CART] */
+  const refreshCart = async () => {
+    const newCart = await commerce.cart.refresh()
+
+    setCart(newCart)
+  }
+
   // fetch products only once
   // so that when useState changes, fetchProducts()
   // will not be called again
@@ -90,7 +115,17 @@ const App = () => {
               />
             }
           ></Route>
-          <Route path="/checkout" element={<Checkout cart={cart} />}></Route>
+          <Route
+            path="/checkout"
+            element={
+              <Checkout
+                cart={cart}
+                order={order}
+                handleCaptureCheckout={handleCaptureCheckout}
+                error={errorMessage}
+              />
+            }
+          ></Route>
         </Routes>
       </div>
     </Router>
