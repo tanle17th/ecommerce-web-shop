@@ -8,12 +8,13 @@ import {
   CircularProgress,
   Divider,
   Button,
+  CssBaseline,
 } from '@material-ui/core'
 import useStyles from './styles'
 import AddressForm from '../AddressForm'
 import PaymentForm from '../PaymentForm'
 import { commerce } from '../../../lib/commerce'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const steps = ['Shipping address', 'Payment details']
 
@@ -22,9 +23,9 @@ const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
   const [checkoutToken, setCheckoutToken] = useState(null)
   const [shippingData, setShippingData] = useState({})
   const classes = useStyles()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    let isMounted = true
     const generateToken = async () => {
       try {
         // generateToken(cartId, typeOfToken):
@@ -35,14 +36,12 @@ const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
         setCheckoutToken(token)
       } catch (e) {
         console.log('Issue generating checkout token')
+        navigate('/')
       }
     }
 
     // async function can not be used with useEffect
-    isMounted && generateToken()
-    return () => {
-      isMounted = false
-    }
+    generateToken()
   }, [cart])
 
   /** Move back and forth the steps */
@@ -101,28 +100,30 @@ const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
 
   return (
     <>
-      <div className={classes.toolbar} />
-      <main className={classes.layout}>
-        <Paper className={classes.paper}>
-          <Typography variant="h4" align="center">
-            Checkout
-          </Typography>
-          <Stepper activeStep={activeStep} className={classes.stepper}>
-            {steps.map((step) => (
-              <Step key={step}>
-                <StepLabel>{step}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          {/* if activeStep == steps.length (=2) (all the steps are done)
+      <CssBaseline>
+        <div className={classes.toolbar} />
+        <main className={classes.layout}>
+          <Paper className={classes.paper}>
+            <Typography variant="h4" align="center">
+              Checkout
+            </Typography>
+            <Stepper activeStep={activeStep} className={classes.stepper}>
+              {steps.map((step) => (
+                <Step key={step}>
+                  <StepLabel>{step}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            {/* if activeStep == steps.length (=2) (all the steps are done)
           we display confirmation page */}
-          {activeStep === steps.length ? (
-            <Confirmation />
-          ) : (
-            checkoutToken && <Form />
-          )}
-        </Paper>
-      </main>
+            {activeStep === steps.length ? (
+              <Confirmation />
+            ) : (
+              checkoutToken && <Form />
+            )}
+          </Paper>
+        </main>
+      </CssBaseline>
     </>
   )
 }

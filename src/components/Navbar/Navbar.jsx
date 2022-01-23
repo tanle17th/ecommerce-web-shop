@@ -35,7 +35,7 @@ const Navbar = ({ totalItems }) => {
               height="25px"
               className={classes.image}
             />
-            CommerceJS
+            What is up
           </Typography>
 
           {/* this div takes up all the space between */}
