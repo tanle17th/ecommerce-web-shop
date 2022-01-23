@@ -37,7 +37,7 @@ const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
         setCheckoutToken(token)
       } catch (e) {
         console.log('Issue generating checkout token')
-        navigate('/')
+        // navigate('/')
       }
     }
 
@@ -82,7 +82,7 @@ const Checkout = ({ cart, order, handleCaptureCheckout, error }) => {
         <div>
           <Typography variant="h5">
             Thank you for your purchase, {order.customer.firstname}{' '}
-            {order.customer_reference}
+            {order.customer.firstname}
           </Typography>
           <Divider className={classes.divider} />
           <Typography variant="subtitle2">
